@@ -6,9 +6,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(
-    !!localStorage.getItem('authenticated') || false
-  );
+  const [isLoggedIn, setIsLoggedIn] = React.useState(!!localStorage.getItem('authenticated'));
 
   const logOut = () => setIsLoggedIn(false);
   const logIn = () => setIsLoggedIn(true);
