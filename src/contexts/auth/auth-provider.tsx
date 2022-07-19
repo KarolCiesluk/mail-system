@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
-import { AuthContext } from './context';
+import { AuthProviderProps } from './types';
+import { AuthType } from './types';
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
+export const AuthContext = React.createContext<AuthType>({
+  isLoggedIn: false,
+  logIn: () => {},
+  logOut: () => {}
+});
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(!!localStorage.getItem('authenticated'));
