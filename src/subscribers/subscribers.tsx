@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface Subscriber {
   id: number;
@@ -50,6 +51,7 @@ export const Subscribers = () => {
   return (
     <div>
       <h1>Subscribers</h1>
+      <Link to="add">Add new subscriber</Link>
 
       {status === 'loading' && <div>Loading…</div>}
 
@@ -60,6 +62,7 @@ export const Subscribers = () => {
           {subscribers.map(({ id, createdTime, fields }) => (
             <li key={id}>
               name: {fields.name}, email: {fields.email}, created at: {createdTime}
+              <Link to={`update/${id}`}>Update subscriber</Link>
             </li>
           ))}
         </ul>
