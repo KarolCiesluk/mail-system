@@ -1,31 +1,14 @@
-interface FormElement extends HTMLFormControlsCollection {
-  name: HTMLInputElement;
-  email: HTMLInputElement;
-}
-
-interface SubscriberFormElement extends HTMLFormElement {
-  readonly elements: FormElement;
-}
+import { usePostSubscriber } from './hooks/use-post-subscriber';
+import { SubscriberFormElement } from './types';
 
 export const AddSubscriber = () => {
+  const { mutate: postSubscriber } = usePostSubscriber();
+
   const submitForm = async (event: React.FormEvent<SubscriberFormElement>) => {
     event.preventDefault();
 
     const { name, email } = event.currentTarget.elements;
-
-    try {
-      await fetch(`${process.env.REACT_APP_API_URL}subscribers`, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`
-        },
-        method: 'POST',
-        body: JSON.stringify({ fields: { name: name.value, email: email.value } })
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    postSubscriber({ name: name.value, email: email.value });
   };
 
   return (
