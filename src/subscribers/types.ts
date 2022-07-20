@@ -1,5 +1,10 @@
 import { UseMutateFunction } from '@tanstack/react-query';
 
+export interface Subscriber {
+  name: string;
+  email: string;
+}
+
 interface FormElement extends HTMLFormControlsCollection {
   name: HTMLInputElement;
   email: HTMLInputElement;
@@ -10,18 +15,10 @@ export interface SubscriberFormElement extends HTMLFormElement {
 }
 
 export interface SubscriberFormProps {
-  submit: UseMutateFunction<
-    void,
-    unknown,
-    {
-      name: string;
-      email: string;
-    },
-    unknown
-  >;
+  submit: UseMutateFunction<void, unknown, Subscriber, unknown>;
   onInputChange?: React.Dispatch<React.SetStateAction<boolean>>;
   formData?: {
-    initialValues: { name: string; email: string };
+    initialValues: Subscriber;
     isLoading: boolean;
     isError: boolean;
     isFetching: boolean;

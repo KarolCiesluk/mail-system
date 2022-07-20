@@ -1,7 +1,4 @@
-export interface Subscriber {
-  name: string;
-  email: string;
-}
+import { Subscriber } from '../types';
 
 export interface SubscriberResponse {
   id: string;
