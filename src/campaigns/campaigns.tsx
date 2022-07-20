@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useCampaigns } from './hooks/use-campaigns';
 
 export const Campaigns = () => {
@@ -6,6 +7,7 @@ export const Campaigns = () => {
   if (isLoading) {
     return <div>Loading…</div>;
   }
+
   if (isError) {
     return <div>Error!!!</div>;
   }
@@ -13,7 +15,21 @@ export const Campaigns = () => {
   return (
     <div>
       <h1>Campaigns</h1>
-      {JSON.stringify(data)}
+
+      <Link to="create">Create a new campaign</Link>
+
+      <ul>
+        {(data?.records || []).map(({ id, fields: { subject, content, status } }) => (
+          <li key={id}>
+            subject: {subject}, content: {content}, status: {status}
+            {status === 'draft' && (
+              <>
+                <Link to="#">Edit</Link> <button onClick={() => {}}>Delete</button>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
