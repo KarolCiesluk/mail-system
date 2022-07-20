@@ -3,3 +3,7 @@ export interface Subscriber {
   createdTime: string;
   fields: { name: string; email: string };
 }
+
+export interface SubscribersResponse {
+  records: Subscriber[];
+}

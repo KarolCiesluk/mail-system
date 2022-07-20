@@ -1,1 +1,1 @@
-export * from './add-subscriber';
+export * from './add-subscriber-form';

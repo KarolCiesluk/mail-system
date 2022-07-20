@@ -1,7 +1,7 @@
 import { usePostSubscriber } from './hooks/use-post-subscriber';
 import { SubscriberFormElement } from './types';
 
-export const AddSubscriber = () => {
+export const AddSubscriberForm = () => {
   const { mutate: postSubscriber } = usePostSubscriber();
 
   const submitForm = async (event: React.FormEvent<SubscriberFormElement>) => {
