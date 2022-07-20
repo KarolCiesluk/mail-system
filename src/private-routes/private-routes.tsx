@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AddSubscriberForm } from '../add-subscriber';
+import { AddSubscriberForm } from '../add-subscriber-form';
 import { Campaigns } from '../campaigns';
 import { Subscribers } from '../subscribers';
 import { UpdateSubscriberForm } from '../update-subscriber-form';
