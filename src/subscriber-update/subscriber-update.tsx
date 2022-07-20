@@ -3,7 +3,7 @@ import { SubscriberForm } from '../subscriber-form';
 
 import { useSubscriber } from './hooks/use-subscriber';
 
-export const UpdateSubscriberForm = () => {
+export const SubscriberUpdate = () => {
   const { subscriberId } = useParams();
   const {
     queryResult: { isError, isFetching, isLoading, data },
