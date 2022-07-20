@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useCampaigns } from './hooks/use-campaigns';
+import { useCampaigns } from '../hooks/use-campaigns';
 
 export const Campaigns = () => {
   const { isLoading, isError, data } = useCampaigns();

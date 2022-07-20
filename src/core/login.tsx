@@ -1,4 +1,4 @@
-import { useAuth } from '../contexts/auth/use-auth';
+import { useAuth } from './auth-context';
 
 export const LoginPage = () => {
   const { logIn } = useAuth();

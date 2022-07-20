@@ -1,4 +1,4 @@
-interface CampaignFields {
+export interface Campaign {
   content: string;
   subject: string;
   status: 'sent' | 'draft';
@@ -7,7 +7,7 @@ interface CampaignFields {
 interface CampaignRecord {
   id: string;
   createdTime: string;
-  fields: CampaignFields;
+  fields: Campaign;
 }
 
 export interface CampaignsResponse {

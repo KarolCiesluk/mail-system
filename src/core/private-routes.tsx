@@ -1,9 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { SubscriberAddition } from '../subscriber-addition';
-import { Campaigns } from '../campaigns';
-import { Subscribers } from '../subscribers';
-import { SubscriberUpdate } from '../subscriber-update';
-import { CampaignCreation } from '../campaign-creation';
+import { CampaignCreation, Campaigns } from '../campaigns/components';
+import { SubscriberAddition, Subscribers, SubscriberUpdate } from '../subscribers/components';
 
 export const PrivateRoutes = () => (
   <Routes>

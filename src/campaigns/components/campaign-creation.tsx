@@ -1,5 +1,5 @@
-import { useCreateCampaign } from './hooks/use-create-campaign';
-import { CampaignFormElement } from './types';
+import { useCreateCampaign } from '../hooks/use-create-campaign';
+import { CampaignFormElement } from '../types';
 
 export const CampaignCreation = () => {
   const { mutate } = useCreateCampaign();

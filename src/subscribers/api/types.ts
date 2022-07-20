@@ -1,9 +1,14 @@
 export interface Subscriber {
+  name: string;
+  email: string;
+}
+
+export interface SubscriberResponse {
   id: string;
   createdTime: string;
-  fields: { name: string; email: string };
+  fields: Subscriber;
 }
 
 export interface SubscribersResponse {
-  records: Subscriber[];
+  records: SubscriberResponse[];
 }

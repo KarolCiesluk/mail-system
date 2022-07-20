@@ -1,4 +1,4 @@
-import { useAuth } from './contexts/auth/use-auth';
+import { useAuth } from './auth-context/use-auth';
 import { LoginPage } from './login';
 import { Navigation } from './navigation';
 import { PrivateRoutes } from './private-routes';

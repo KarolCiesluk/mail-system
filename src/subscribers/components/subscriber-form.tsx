@@ -1,4 +1,4 @@
-import { SubscriberFormElement, SubscriberFormProps } from './types';
+import { SubscriberFormElement, SubscriberFormProps } from '../types';
 
 export const SubscriberForm = ({ submit, onInputChange, formData }: SubscriberFormProps) => {
   const submitForm = async (event: React.FormEvent<SubscriberFormElement>) => {

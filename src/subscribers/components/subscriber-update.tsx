@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
-import { SubscriberForm } from '../subscriber-form';
 
-import { useSubscriber } from './hooks/use-subscriber';
+import { useSubscriber } from '../hooks/use-subscriber';
+import { SubscriberForm } from './subscriber-form';
 
 export const SubscriberUpdate = () => {
   const { subscriberId } = useParams();

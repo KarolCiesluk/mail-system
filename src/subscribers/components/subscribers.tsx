@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useDeleteSubscriber } from './hooks/use-delete-subscriber';
-import { useSubscribers } from './hooks/use-subscribers';
+import { useDeleteSubscriber } from '../hooks/use-delete-subscriber';
+import { useSubscribers } from '../hooks/use-subscribers';
 
 export const Subscribers = () => {
   const { isLoading, isError, isFetching, data: subscribers } = useSubscribers();

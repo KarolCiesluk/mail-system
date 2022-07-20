@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App from './core';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './lib/query-client';
-import { AuthProvider } from './contexts/auth';
+import { QueryClient } from '@tanstack/react-query';
+import { AuthProvider } from './core/auth-context';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+export const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
