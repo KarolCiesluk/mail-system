@@ -1,5 +1,5 @@
 import { useAuth } from './auth-context/use-auth';
-import { LoginPage } from './login';
+import { Login } from './login';
 import { Navigation } from './navigation';
 import { PrivateRoutes } from './private-routes';
 
@@ -14,7 +14,7 @@ function App() {
           <PrivateRoutes />
         </>
       ) : (
-        <LoginPage />
+        <Login />
       )}
     </>
   );

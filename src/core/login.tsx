@@ -1,6 +1,6 @@
 import { useAuth } from './auth-context';
 
-export const LoginPage = () => {
+export const Login = () => {
   const { logIn } = useAuth();
 
   return (
