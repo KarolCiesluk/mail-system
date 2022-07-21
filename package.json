@@ -1,0 +1,19 @@
+{
+  "name": "mail-system",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": " cd client && yarn install && yarn run build"
+  },
+  "engines": {
+    "node": "16.16.0"
+  },
+  "author": "Karol Ciesluk <karolciesluk.db@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "path": "^0.12.7"
+  }
+}
