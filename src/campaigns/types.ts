@@ -1,3 +1,9 @@
+export interface Campaign {
+  content: string;
+  subject: string;
+  status: 'sent' | 'draft';
+}
+
 interface FormElement extends HTMLFormControlsCollection {
   subject: HTMLInputElement;
   content: HTMLTextAreaElement;

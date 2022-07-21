@@ -1,11 +1,8 @@
 import axios from 'axios';
 import { SubscriberResponse } from './types';
 
-export const getSubscriber = async (subscriberId?: string) => {
-  if (!subscriberId) {
-    return;
-  }
+export const getSubscriber = async (id: string) => {
+  const { data } = await axios.get<SubscriberResponse>(`/api/subscribers/${id}`);
 
-  const { data } = await axios.get<SubscriberResponse>(`/api/subscribers/${subscriberId}`);
   return data;
 };

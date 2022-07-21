@@ -1,15 +1,11 @@
-export interface Campaign {
-  content: string;
-  subject: string;
-  status: 'sent' | 'draft';
-}
+import { Campaign } from '../types';
 
-interface CampaignRecord {
+export interface CampaignResponse {
   id: string;
   createdTime: string;
   fields: Campaign;
 }
 
 export interface CampaignsResponse {
-  records: CampaignRecord[];
+  records: CampaignResponse[];
 }

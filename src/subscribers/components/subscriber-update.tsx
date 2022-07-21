@@ -9,7 +9,7 @@ export const SubscriberUpdate = () => {
     queryResult: { isError, isFetching, isLoading, data },
     mutation: { mutate },
     setIsDraft
-  } = useSubscriber(subscriberId);
+  } = useSubscriber(subscriberId || '');
 
   return (
     <SubscriberForm

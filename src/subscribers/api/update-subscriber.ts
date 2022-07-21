@@ -1,14 +1,8 @@
 import axios from 'axios';
+import { Subscriber } from '../types';
 
-export const updateSubscriber = async (
-  data: { name: string; email: string },
-  subscriberId?: string
-) => {
-  if (!subscriberId) {
-    return;
-  }
-
-  await axios.patch(`/api/subscribers/${subscriberId}`, {
-    fields: data
+export const updateSubscriber = async (fields: Subscriber, id: string) => {
+  await axios.patch(`/api/subscribers/${id}`, {
+    fields
   });
 };
