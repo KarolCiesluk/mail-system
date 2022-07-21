@@ -7,13 +7,6 @@ import { PrivateRoutes } from './private-routes';
 function App() {
   const { isLoggedIn } = useAuth();
 
-  // testing if server works correctly
-  React.useEffect(() => {
-    fetch('/api')
-      .then((resp) => resp.json())
-      .then((data) => console.log('data: ', data));
-  }, []);
-
   return (
     <>
       {isLoggedIn ? (
