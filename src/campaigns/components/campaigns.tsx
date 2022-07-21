@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useCampaigns } from '../hooks/use-campaigns';
+import { useDeleteCampaign } from '../hooks/use-delete-campaign';
 
 export const Campaigns = () => {
   const { isLoading, isError, data } = useCampaigns();
+  const { mutate } = useDeleteCampaign();
 
   if (isLoading) {
     return <div>Loading…</div>;
@@ -24,7 +26,7 @@ export const Campaigns = () => {
             subject: {subject}, content: {content}, status: {status}
             {status === 'draft' && (
               <>
-                <Link to="#">Edit</Link> <button onClick={() => {}}>Delete</button>
+                <Link to="#">Edit</Link> <button onClick={() => mutate(id)}>Delete</button>
               </>
             )}
           </li>
