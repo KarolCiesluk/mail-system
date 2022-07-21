@@ -26,7 +26,8 @@ export const Campaigns = () => {
             subject: {subject}, content: {content}, status: {status}
             {status === 'draft' && (
               <>
-                <Link to="#">Edit</Link> <button onClick={() => mutate(id)}>Delete</button>
+                <Link to={`${id}/update`}>Edit</Link>{' '}
+                <button onClick={() => mutate(id)}>Delete</button>
               </>
             )}
           </li>

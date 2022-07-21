@@ -20,7 +20,7 @@ export const Subscribers = () => {
           {subscribers.map(({ id, createdTime, fields }) => (
             <li key={id}>
               name: {fields.name}, email: {fields.email}, created at: {createdTime}
-              <Link to={`update/${id}`}>Update subscriber</Link>
+              <Link to={`${id}/update`}>Update subscriber</Link>
               <button onClick={() => deleteSubscriber(id)}>Delete</button>
             </li>
           ))}
