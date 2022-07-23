@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAuth } from './auth-context/use-auth';
 import { Login } from './login';
 import { Navigation } from './navigation';
