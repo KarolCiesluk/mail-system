@@ -1,7 +1,9 @@
-const express = require("express");
-const path = require("path");
-require("dotenv").config();
-const { createProxyMiddleware } = require("http-proxy-middleware");
+import * as express from "express";
+import * as path from "path";
+import * as dotenv from "dotenv";
+import { createProxyMiddleware } from "http-proxy-middleware";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 3001;
 
