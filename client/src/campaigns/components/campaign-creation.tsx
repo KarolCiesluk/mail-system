@@ -89,7 +89,10 @@ export const CampaignCreation = () => {
         </button>
         <button
           onClick={() =>
-            mutation.mutate({ subject: formValues.subject, content: formValues.content })
+            mutation.mutate({
+              subject: formValues.subject,
+              content: formValues.content
+            })
           }
           name="send"
           type="submit">
