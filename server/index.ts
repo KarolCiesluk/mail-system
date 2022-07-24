@@ -1,33 +1,45 @@
 import * as express from "express";
 import * as path from "path";
 import * as dotenv from "dotenv";
+import * as sgMail from "@sendgrid/mail";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-// import * as sgMail from "@sendgrid/mail";
-
 dotenv.config();
-
 const PORT = process.env.PORT || 3001;
-
 const app = express();
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-// const msg = {
-//   to: "karolciesluk.db@gmail.com",
-//   from: "karol.cc@wp.pl",
-//   subject: "Hello {{name}}!",
-//   text: "and -name- to do anywhere, even with Node.js",
-//   html: "<strong>and {{name}} to do anywhere, even with Node.js</strong>",
-//   substitutionWrappers: ["{{", "}}"],
-//   substitutions: {
-//     name: "Karol",
-//   },
-// };
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+
+const msg = ({ subject, content }: { subject: string; content: string }) => {
+  return {
+    personalizations: [
+      {
+        to: "karolciesluk.db@gmail.com",
+        substitutions: {
+          name: "Karol",
+        },
+      },
+      {
+        to: "karol.ciesluk@kruko.io",
+        substitutions: {
+          name: "Kruko",
+        },
+      },
+    ],
+    from: "karol.cc@wp.pl",
+    subject,
+    text: content,
+    substitutionWrappers: ["{{", "}}"],
+    substitutions: {
+      name: "Karol",
+    },
+  };
+};
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 const airtableProxy = {
-  target: `${process.env.API_URL}`,
+  target: process.env.API_URL,
   changeOrigin: true,
   headers: {
     Authorization: `Bearer ${process.env.API_KEY}`,
@@ -43,16 +55,20 @@ app.use(
   createProxyMiddleware(airtableProxy)
 );
 
+app.use(express.json());
+
+app.post("/mail", async (req, res) => {
+  try {
+    await sgMail.send(msg(req.body));
+    res.send({ message: "udalo sie wysłać maile" });
+  } catch (error) {
+    res.status(500);
+    console.log("error: ", error);
+    res.send({ message: "Błąd wysyłania maili" });
+  }
+});
+
 app.get("*", (_req, res) => {
-  // sgMail
-  //   .send(msg)
-  //   .then(() => {
-  //     console.log("Email sent");
-  //   })
-  //   .catch((error: unknown) => {
-  //     console.error(error);
-  //   });
-  // console.log("send_grid_api_key: ", process.env.SENDGRID_API_KEY);
   res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
 });
 
