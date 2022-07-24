@@ -1,48 +1,56 @@
 import * as express from "express";
 import * as path from "path";
 import * as dotenv from "dotenv";
-import * as sgMail from "@sendgrid/mail";
+import * as SendGridMail from "@sendgrid/mail";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import * as Airtable from "airtable";
+import { Message, Subscriber } from "./types";
+import { getRequiredEnv } from "./utils";
 
 dotenv.config();
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+const base = new Airtable({ apiKey: getRequiredEnv("AIRTABLE_API_KEY") }).base(
+  getRequiredEnv("AIRTABLE_BASE_KEY")
+);
 
-const msg = ({ subject, content }: { subject: string; content: string }) => {
+SendGridMail.setApiKey(getRequiredEnv("SENDGRID_API_KEY"));
+
+const buildMessage = ({
+  message: { subject, content },
+  subscribersData,
+}: {
+  message: Message;
+  subscribersData: Subscriber[];
+}) => {
+  const personalizations = subscribersData.map(
+    ({ fields: { name, email } }) => ({
+      to: email,
+      substitutions: {
+        name,
+      },
+    })
+  );
+
   return {
-    personalizations: [
-      {
-        to: "karolciesluk.db@gmail.com",
-        substitutions: {
-          name: "Karol",
-        },
-      },
-      {
-        to: "karol.ciesluk@kruko.io",
-        substitutions: {
-          name: "Kruko",
-        },
-      },
-    ],
-    from: "karol.cc@wp.pl",
+    personalizations,
+    from: getRequiredEnv("SENDER_EMAIL"),
     subject,
     text: content,
     substitutionWrappers: ["{{", "}}"],
-    substitutions: {
-      name: "Karol",
-    },
   };
 };
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 const airtableProxy = {
-  target: process.env.API_URL,
+  target: `${getRequiredEnv("AIRTABLE_API_URL")}${getRequiredEnv(
+    "AIRTABLE_BASE_KEY"
+  )}`,
   changeOrigin: true,
   headers: {
-    Authorization: `Bearer ${process.env.API_KEY}`,
+    Authorization: `Bearer ${getRequiredEnv("AIRTABLE_API_KEY")}`,
   },
   pathRewrite: {
     "^/api/subscribers": "/subscribers",
@@ -57,9 +65,17 @@ app.use(
 
 app.use(express.json());
 
+const getSubscribers = async (): Promise<Subscriber[]> =>
+  base("subscribers").select().all();
+
 app.post("/mail", async (req, res) => {
   try {
-    await sgMail.send(msg(req.body));
+    const subscribersData = await getSubscribers();
+
+    await SendGridMail.send(
+      buildMessage({ message: req.body, subscribersData })
+    );
+
     res.send({ message: "udalo sie wysłać maile" });
   } catch (error) {
     res.status(500);

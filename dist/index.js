@@ -12,43 +12,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
-const sgMail = require("@sendgrid/mail");
+const SendGridMail = require("@sendgrid/mail");
 const http_proxy_middleware_1 = require("http-proxy-middleware");
+const Airtable = require("airtable");
+const utils_1 = require("./utils");
 dotenv.config();
 const PORT = process.env.PORT || 3001;
 const app = express();
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-const msg = ({ subject, content }) => {
+const base = new Airtable({ apiKey: (0, utils_1.getRequiredEnv)("AIRTABLE_API_KEY") }).base((0, utils_1.getRequiredEnv)("AIRTABLE_BASE_KEY"));
+SendGridMail.setApiKey((0, utils_1.getRequiredEnv)("SENDGRID_API_KEY"));
+const buildMessage = ({ message: { subject, content }, subscribersData, }) => {
+    const personalizations = subscribersData.map(({ fields: { name, email } }) => ({
+        to: email,
+        substitutions: {
+            name,
+        },
+    }));
     return {
-        personalizations: [
-            {
-                to: "karolciesluk.db@gmail.com",
-                substitutions: {
-                    name: "Karol",
-                },
-            },
-            {
-                to: "karol.ciesluk@kruko.io",
-                substitutions: {
-                    name: "Kruko",
-                },
-            },
-        ],
-        from: "karol.cc@wp.pl",
+        personalizations,
+        from: (0, utils_1.getRequiredEnv)("SENDER_EMAIL"),
         subject,
         text: content,
         substitutionWrappers: ["{{", "}}"],
-        substitutions: {
-            name: "Karol",
-        },
     };
 };
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 const airtableProxy = {
-    target: process.env.API_URL,
+    target: `${(0, utils_1.getRequiredEnv)("AIRTABLE_API_URL")}${(0, utils_1.getRequiredEnv)("AIRTABLE_BASE_KEY")}`,
     changeOrigin: true,
     headers: {
-        Authorization: `Bearer ${process.env.API_KEY}`,
+        Authorization: `Bearer ${(0, utils_1.getRequiredEnv)("AIRTABLE_API_KEY")}`,
     },
     pathRewrite: {
         "^/api/subscribers": "/subscribers",
@@ -57,9 +50,11 @@ const airtableProxy = {
 };
 app.use(["/api/subscribers", "/api/campaigns"], (0, http_proxy_middleware_1.createProxyMiddleware)(airtableProxy));
 app.use(express.json());
+const getSubscribers = () => __awaiter(void 0, void 0, void 0, function* () { return base("subscribers").select().all(); });
 app.post("/mail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield sgMail.send(msg(req.body));
+        const subscribersData = yield getSubscribers();
+        yield SendGridMail.send(buildMessage({ message: req.body, subscribersData }));
         res.send({ message: "udalo sie wysłać maile" });
     }
     catch (error) {
