@@ -1,21 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import React from 'react';
 import { useCreateCampaign } from '../hooks/use-create-campaign';
-import { CampaignFormElement } from '../types';
-
-const sendCampaign = async (formValues: { subject: string; content: string }) => {
-  axios.post('/mail', {
-    subject: formValues.subject,
-    content: formValues.content
-  });
-};
-
-const useSendCampaign = ({ onError, onSuccess }: { onError: () => void; onSuccess: () => void }) =>
-  useMutation(sendCampaign, {
-    onError,
-    onSuccess
-  });
+import { useSendCampaign } from '../hooks/use-send-campaign';
 
 export const CampaignCreation = () => {
   const [formValues, setFormValues] = React.useState({
@@ -23,45 +8,33 @@ export const CampaignCreation = () => {
     content: ''
   });
 
-  console.log('formValues: ', formValues);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { value, name } = event.target;
+
     setFormValues((prevFormValues) => ({
       ...prevFormValues,
       [name]: value
     }));
   };
 
-  const { mutate } = useCreateCampaign();
-
-  const submitForm = (event: React.FormEvent<CampaignFormElement>) => {
-    event.preventDefault();
-  };
+  const createCampaign = useCreateCampaign();
 
   const saveCampaign = (status: 'draft' | 'sent' = 'draft') => {
-    console.log('saving');
-    mutate({ subject: formValues.subject, content: formValues.content, status });
+    createCampaign.mutate({ subject: formValues.subject, content: formValues.content, status });
   };
+  const saveDraftCampaign = () => saveCampaign('draft');
+  const saveSentCampaign = () => saveCampaign('sent');
 
-  const saveCampaignDraft = () => {
-    saveCampaign('draft');
-  };
-
-  const saveCompletedCampaign = () => {
-    saveCampaign('sent');
-  };
-
-  const mutation = useSendCampaign({
-    onError: saveCampaignDraft,
-    onSuccess: saveCompletedCampaign
+  const sendCampaign = useSendCampaign({
+    onError: saveDraftCampaign,
+    onSuccess: saveSentCampaign
   });
 
   return (
     <div>
       <h1>Campaign creation</h1>
 
-      <form onSubmit={submitForm}>
+      <form onSubmit={(event) => event.preventDefault()}>
         <label>
           Subject:
           <input
@@ -84,17 +57,17 @@ export const CampaignCreation = () => {
           />
         </label>
 
-        <button onClick={saveCampaignDraft} name="save" type="submit">
+        <button onClick={saveDraftCampaign} type="submit">
           Save
         </button>
+
         <button
           onClick={() =>
-            mutation.mutate({
+            sendCampaign.mutate({
               subject: formValues.subject,
               content: formValues.content
             })
           }
-          name="send"
           type="submit">
           Send
         </button>
