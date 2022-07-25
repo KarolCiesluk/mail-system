@@ -5,7 +5,7 @@ import * as SendGridMail from "@sendgrid/mail";
 import * as Airtable from "airtable";
 import { Subscriber } from "./types";
 import { buildMessage, getRequiredEnv } from "./utils";
-import { airtableProxy, airtableProxyPaths, jsonParser } from "./middleware";
+import { airtableProxy, airtableProxyPaths } from "./middleware";
 
 dotenv.config();
 
@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
-
-app.use(jsonParser);
+app.use(airtableProxyPaths, airtableProxy);
+app.use(express.json());
 
 const base = new Airtable({ apiKey: getRequiredEnv("AIRTABLE_API_KEY") }).base(
   getRequiredEnv("AIRTABLE_BASE_KEY")
@@ -26,23 +26,20 @@ SendGridMail.setApiKey(getRequiredEnv("SENDGRID_API_KEY"));
 const getSubscribers = async (): Promise<Subscriber[]> =>
   base("subscribers").select().all();
 
-app.post("/mail", async (req, res) => {
+app.post("/api/mail", async (req, res, next) => {
   try {
     const subscribersData = await getSubscribers();
 
-    await SendGridMail.send(
+    const mailResponse = await SendGridMail.send(
       buildMessage({ message: req.body, subscribersData })
     );
 
-    res.send({ message: "udalo sie wysłać maile" });
+    res.send(mailResponse);
   } catch (error) {
     res.status(500);
-    console.log("error: ", error);
-    res.send({ message: "Błąd wysyłania maili" });
+    next(error);
   }
 });
-
-app.use(airtableProxyPaths, airtableProxy);
 
 app.get("*", (_req, res) => {
   res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
