@@ -1,21 +1,8 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getCampaign } from '../api/get-campaign';
-import { updateCampaign } from '../api/update-campaign';
-import { Campaign } from '../types';
 
 export const useCampaign = (id: string) => {
-  const [isDraft, setIsDraft] = useState(false);
-
-  const queryResult = useQuery(['campaigns', id], () => getCampaign(id), {
-    enabled: !isDraft
+  return useQuery(['campaigns', id], () => getCampaign(id), {
+    staleTime: Infinity
   });
-
-  const mutation = useMutation((fields: Campaign) => updateCampaign(fields, id), {
-    onSuccess: () => {
-      setIsDraft(false);
-    }
-  });
-
-  return { queryResult, mutation, setIsDraft };
 };

@@ -1,47 +1,81 @@
 import { useParams } from 'react-router-dom';
 import { useCampaign } from '../hooks/use-campaign';
-import { CampaignFormElement } from '../types';
+import { useForm } from 'react-hook-form';
+import { useSendCampaign } from '../hooks/use-send-campaign';
+import { useUpdateCampaign } from '../hooks/use-update-campaign.ts';
+import { Campaign } from '../types';
 
 export const CampaignUpdate = () => {
   const { campaignId } = useParams();
+
+  const campaign = useCampaign(campaignId || '');
+
+  const updateCampaign = useUpdateCampaign(campaignId || '');
+
   const {
-    queryResult: { isLoading, isError, isFetching, data },
-    mutation: { mutate },
-    setIsDraft
-  } = useCampaign(campaignId || '');
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm<Omit<Campaign, 'status'>>();
 
-  const submitForm = (event: React.FormEvent<CampaignFormElement>) => {
-    event.preventDefault();
+  const saveSentCampaign = handleSubmit((formValues) => {
+    updateCampaign.mutate({ ...formValues, status: 'sent' });
+  });
 
-    const { subject, content } = event.currentTarget.elements;
-    mutate({ subject: subject.value, content: content.value, status: 'draft' });
-  };
+  const saveDraftCampaign = handleSubmit((formValues) => {
+    updateCampaign.mutate({ ...formValues, status: 'draft' });
+  });
 
-  if (isLoading) {
+  const sendCampaign = useSendCampaign({
+    onError: saveDraftCampaign,
+    onSuccess: saveSentCampaign
+  });
+
+  const handleSendCampaign = handleSubmit((formValues) => sendCampaign.mutate(formValues));
+
+  const disableButtons = updateCampaign.isLoading || sendCampaign.isLoading;
+
+  if (campaign.isLoading) {
     return <div>Loading…</div>;
   }
 
-  if (isError) {
+  if (campaign.isError) {
     return <div>Error!!!</div>;
   }
 
   return (
     <div>
       <h1>Campaign update</h1>
-      {isFetching && <div>Fetching…</div>}
+      {campaign.isFetching && <div>Fetching…</div>}
 
-      <form onSubmit={submitForm} onChange={() => setIsDraft(true)}>
-        <label>
+      <form onSubmit={(event) => event.preventDefault()}>
+        <label htmlFor="subject">
           Subject:
-          <input defaultValue={data?.fields.subject} id="subject" required />
+          <input
+            id="subject"
+            {...register('subject', { required: 'Subject is required' })}
+            defaultValue={campaign.data?.fields.subject}
+          />
         </label>
+        <p>{errors.subject?.message}</p>
 
-        <label>
+        <label htmlFor="content">
           Content:
-          <textarea defaultValue={data?.fields.content} id="content" required />
+          <textarea
+            id="content"
+            {...register('content', { required: 'Content is required' })}
+            defaultValue={campaign.data?.fields.content}
+          />
         </label>
+        <p>{errors.content?.message}</p>
 
-        <button type="submit">Save</button>
+        <button onClick={saveDraftCampaign} type="submit" disabled={disableButtons}>
+          Save
+        </button>
+
+        <button onClick={handleSendCampaign} type="submit" disabled={disableButtons}>
+          Send
+        </button>
       </form>
     </div>
   );
