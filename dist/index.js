@@ -13,48 +13,21 @@ const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
 const SendGridMail = require("@sendgrid/mail");
-const http_proxy_middleware_1 = require("http-proxy-middleware");
 const Airtable = require("airtable");
 const utils_1 = require("./utils");
+const middleware_1 = require("./middleware");
 dotenv.config();
 const PORT = process.env.PORT || 3001;
 const app = express();
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+app.use(middleware_1.jsonParser);
 const base = new Airtable({ apiKey: (0, utils_1.getRequiredEnv)("AIRTABLE_API_KEY") }).base((0, utils_1.getRequiredEnv)("AIRTABLE_BASE_KEY"));
 SendGridMail.setApiKey((0, utils_1.getRequiredEnv)("SENDGRID_API_KEY"));
-const buildMessage = ({ message: { subject, content }, subscribersData, }) => {
-    const personalizations = subscribersData.map(({ fields: { name, email } }) => ({
-        to: email,
-        substitutions: {
-            name,
-        },
-    }));
-    return {
-        personalizations,
-        from: (0, utils_1.getRequiredEnv)("SENDER_EMAIL"),
-        subject,
-        text: content,
-        substitutionWrappers: ["{{", "}}"],
-    };
-};
-app.use(express.static(path.resolve(__dirname, "../client/build")));
-const airtableProxy = {
-    target: `${(0, utils_1.getRequiredEnv)("AIRTABLE_API_URL")}${(0, utils_1.getRequiredEnv)("AIRTABLE_BASE_KEY")}`,
-    changeOrigin: true,
-    headers: {
-        Authorization: `Bearer ${(0, utils_1.getRequiredEnv)("AIRTABLE_API_KEY")}`,
-    },
-    pathRewrite: {
-        "^/api/subscribers": "/subscribers",
-        "^/api/campaigns": "/campaigns",
-    },
-};
-app.use(["/api/subscribers", "/api/campaigns"], (0, http_proxy_middleware_1.createProxyMiddleware)(airtableProxy));
-app.use(express.json());
 const getSubscribers = () => __awaiter(void 0, void 0, void 0, function* () { return base("subscribers").select().all(); });
 app.post("/mail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const subscribersData = yield getSubscribers();
-        yield SendGridMail.send(buildMessage({ message: req.body, subscribersData }));
+        yield SendGridMail.send((0, utils_1.buildMessage)({ message: req.body, subscribersData }));
         res.send({ message: "udalo sie wysłać maile" });
     }
     catch (error) {
@@ -63,6 +36,7 @@ app.post("/mail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.send({ message: "Błąd wysyłania maili" });
     }
 }));
+app.use(middleware_1.airtableProxyPaths, middleware_1.airtableProxy);
 app.get("*", (_req, res) => {
     res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
 });
