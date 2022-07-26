@@ -2,7 +2,7 @@ import { useAddSubscriber } from '../hooks/use-add-subscriber';
 import { SubscriberForm } from './subscriber-form';
 
 export const SubscriberAddition = () => {
-  const { mutate } = useAddSubscriber();
+  const addSubscriber = useAddSubscriber();
 
-  return <SubscriberForm submit={mutate} />;
+  return <SubscriberForm title="Add subscriber" mutation={addSubscriber} />;
 };

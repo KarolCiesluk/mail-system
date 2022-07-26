@@ -1,10 +1,4 @@
-import { Subscriber } from '../types';
-
-export interface SubscriberResponse {
-  id: string;
-  createdTime: string;
-  fields: Subscriber;
-}
+import { SubscriberResponse } from '../types';
 
 export interface SubscribersResponse {
   records: SubscriberResponse[];

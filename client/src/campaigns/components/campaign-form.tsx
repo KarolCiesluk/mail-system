@@ -1,8 +1,7 @@
 import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
-import { Campaign } from '../types';
+import { Campaign, CampaignResponse } from '../types';
 import { useForm } from 'react-hook-form';
 import { useSendCampaign } from '../hooks/use-send-campaign';
-import { CampaignResponse } from '../api/types';
 
 interface CampaignFormProps {
   title: string;

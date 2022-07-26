@@ -1,46 +1,65 @@
-import { SubscriberFormElement, SubscriberFormProps } from '../types';
+import { Subscriber, SubscriberResponse } from '../types';
+import { useForm } from 'react-hook-form';
+import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 
-export const SubscriberForm = ({ submit, onInputChange, formData }: SubscriberFormProps) => {
-  const submitForm = async (event: React.FormEvent<SubscriberFormElement>) => {
-    event.preventDefault();
+export interface SubscriberFormProps {
+  title: string;
+  mutation: UseMutationResult<void, unknown, Subscriber, unknown>;
+  subscriber?: UseQueryResult<SubscriberResponse, unknown>;
+}
 
-    const { name, email } = event.currentTarget.elements;
-    submit({ name: name.value, email: email.value });
-  };
+export const SubscriberForm = ({ title, mutation, subscriber }: SubscriberFormProps) => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm<Subscriber>();
 
-  if (formData?.isLoading) {
+  const submit = handleSubmit(({ name, email }) => mutation.mutate({ name, email }));
+
+  if (subscriber?.isLoading) {
     return <div>Loading…</div>;
   }
-  if (formData?.isError) {
+
+  if (subscriber?.isError) {
     return <div>Error!!!</div>;
   }
-  return (
-    <form onSubmit={submitForm}>
-      {formData?.isFetching && <span>Fetching…</span>}
-      <h1>Update subscriber</h1>
 
-      <label>
+  return (
+    <form onSubmit={submit}>
+      {subscriber?.isFetching && <span>Fetching…</span>}
+      <h1>{title}</h1>
+
+      <label htmlFor="name">
         Name
         <input
-          {...(onInputChange && { onChange: () => onInputChange(true) })}
-          defaultValue={formData?.initialValues.name}
-          required
           id="name"
+          {...register('name', { required: 'Name is required' })}
+          defaultValue={subscriber?.data.fields.name}
+          required
         />
       </label>
+      <p>{errors.name?.message}</p>
 
-      <label>
+      <label htmlFor="email">
         Email
         <input
-          {...(onInputChange && { onChange: () => onInputChange(true) })}
-          defaultValue={formData?.initialValues.email}
-          required
           id="email"
-          type="email"
+          {...register('email', {
+            required: 'Email is required',
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: 'Entered value does not match email format'
+            }
+          })}
+          defaultValue={subscriber?.data.fields.email}
         />
       </label>
+      <p>{errors.email?.message}</p>
 
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={mutation.isLoading}>
+        Submit
+      </button>
     </form>
   );
 };

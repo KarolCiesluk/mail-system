@@ -4,11 +4,8 @@ export interface Campaign {
   status: 'sent' | 'draft';
 }
 
-interface FormElement extends HTMLFormControlsCollection {
-  subject: HTMLInputElement;
-  content: HTMLTextAreaElement;
-}
-
-export interface CampaignFormElement extends HTMLFormElement {
-  readonly elements: FormElement;
+export interface CampaignResponse {
+  id: string;
+  createdTime: string;
+  fields: Campaign;
 }
