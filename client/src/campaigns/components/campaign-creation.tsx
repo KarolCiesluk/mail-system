@@ -1,74 +1,56 @@
-import React from 'react';
 import { useCreateCampaign } from '../hooks/use-create-campaign';
 import { useSendCampaign } from '../hooks/use-send-campaign';
+import { useForm } from 'react-hook-form';
+import { Campaign } from '../types';
 
 export const CampaignCreation = () => {
-  const [formValues, setFormValues] = React.useState({
-    subject: '',
-    content: ''
-  });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value, name } = event.target;
-
-    setFormValues((prevFormValues) => ({
-      ...prevFormValues,
-      [name]: value
-    }));
-  };
-
   const createCampaign = useCreateCampaign();
 
-  const saveCampaign = (status: 'draft' | 'sent' = 'draft') => {
-    createCampaign.mutate({ subject: formValues.subject, content: formValues.content, status });
-  };
-  const saveDraftCampaign = () => saveCampaign('draft');
-  const saveSentCampaign = () => saveCampaign('sent');
+  const {
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm<Omit<Campaign, 'status'>>();
+
+  const saveDraftCampaign = handleSubmit((formValues) => {
+    createCampaign.mutate({ ...formValues, status: 'draft' });
+  });
+
+  const saveSentCampaign = handleSubmit((formValues) => {
+    createCampaign.mutate({ ...formValues, status: 'sent' });
+  });
 
   const sendCampaign = useSendCampaign({
     onError: saveDraftCampaign,
     onSuccess: saveSentCampaign
   });
 
+  const handleSendCampaign = handleSubmit((formValues) => sendCampaign.mutate(formValues));
+
+  const disableButtons = createCampaign.isLoading || sendCampaign.isLoading;
+
   return (
     <div>
       <h1>Campaign creation</h1>
 
       <form onSubmit={(event) => event.preventDefault()}>
-        <label>
+        <label htmlFor="subject">
           Subject:
-          <input
-            value={formValues.subject}
-            onChange={handleChange}
-            name="subject"
-            id="subject"
-            required
-          />
+          <input id="subject" {...register('subject', { required: 'Subject is required' })} />
         </label>
+        <p>{errors.subject?.message}</p>
 
-        <label>
+        <label htmlFor="content">
           Content:
-          <textarea
-            value={formValues.content}
-            onChange={handleChange}
-            name="content"
-            id="content"
-            required
-          />
+          <textarea id="content" {...register('content', { required: 'Content is required' })} />
         </label>
+        <p>{errors.content?.message}</p>
 
-        <button onClick={saveDraftCampaign} type="submit">
+        <button onClick={saveDraftCampaign} type="submit" disabled={disableButtons}>
           Save
         </button>
 
-        <button
-          onClick={() =>
-            sendCampaign.mutate({
-              subject: formValues.subject,
-              content: formValues.content
-            })
-          }
-          type="submit">
+        <button onClick={handleSendCampaign} type="submit" disabled={disableButtons}>
           Send
         </button>
       </form>
