@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface CampaignFormProps {
   title: string;
-  mutation: UseMutationResult<void, unknown, Campaign, unknown>;
+  mutation: UseMutationResult<CampaignResponse, unknown, Campaign, unknown>;
   campaign?: UseQueryResult<CampaignResponse, unknown>;
 }
 

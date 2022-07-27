@@ -1,4 +1,8 @@
 import axios from 'axios';
-import { Subscriber } from '../types';
+import { Subscriber, SubscriberResponse } from '../types';
 
-export const addSubscriber = (fields: Subscriber) => axios.post('/api/subscribers', { fields });
+export const addSubscriber = async (fields: Subscriber) => {
+  const { data } = await axios.post<SubscriberResponse>('/api/subscribers', { fields });
+
+  return data;
+};

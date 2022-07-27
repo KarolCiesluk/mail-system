@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { Campaign } from '../types';
+import { Campaign, CampaignResponse } from '../types';
 
 export const updateCampaign = async (fields: Campaign, id: string) => {
-  await axios.patch(`/api/campaigns/${id}`, { fields });
+  const { data } = await axios.patch<CampaignResponse>(`/api/campaigns/${id}`, { fields });
+
+  return data;
 };

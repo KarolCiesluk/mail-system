@@ -1,12 +1,11 @@
 import { Subscriber, SubscriberResponse } from '../types';
 import { useForm } from 'react-hook-form';
 import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export interface SubscriberFormProps {
   title: string;
-  mutation: UseMutationResult<AxiosResponse<unknown, unknown>, unknown, Subscriber, unknown>;
+  mutation: UseMutationResult<SubscriberResponse, unknown, Subscriber, unknown>;
   subscriber?: UseQueryResult<SubscriberResponse, unknown>;
 }
 
