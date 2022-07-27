@@ -1,4 +1,4 @@
-import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
+import { DefinedUseQueryResult, UseMutationResult } from '@tanstack/react-query';
 import { Campaign, CampaignResponse } from '../types';
 import { useForm } from 'react-hook-form';
 import { useSendCampaign } from '../hooks/use-send-campaign';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 interface CampaignFormProps {
   title: string;
   mutation: UseMutationResult<CampaignResponse, unknown, Campaign, unknown>;
-  campaign?: UseQueryResult<CampaignResponse, unknown>;
+  campaign?: DefinedUseQueryResult<CampaignResponse | undefined, unknown>;
 }
 
 export const CampaignForm = ({ title, mutation, campaign }: CampaignFormProps) => {

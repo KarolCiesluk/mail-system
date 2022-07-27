@@ -1,12 +1,12 @@
 import { Subscriber, SubscriberResponse } from '../types';
 import { useForm } from 'react-hook-form';
-import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
+import { DefinedUseQueryResult, UseMutationResult } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 export interface SubscriberFormProps {
   title: string;
   mutation: UseMutationResult<SubscriberResponse, unknown, Subscriber, unknown>;
-  subscriber?: UseQueryResult<SubscriberResponse, unknown>;
+  subscriber?: DefinedUseQueryResult<SubscriberResponse | undefined, unknown>;
 }
 
 export const SubscriberForm = ({ title, mutation, subscriber }: SubscriberFormProps) => {
@@ -47,7 +47,7 @@ export const SubscriberForm = ({ title, mutation, subscriber }: SubscriberFormPr
         <input
           id="name"
           {...register('name', { required: 'Name is required' })}
-          defaultValue={subscriber?.data.fields.name}
+          defaultValue={subscriber?.data?.fields.name}
           required
         />
       </label>
@@ -64,7 +64,7 @@ export const SubscriberForm = ({ title, mutation, subscriber }: SubscriberFormPr
               message: 'Entered value does not match email format'
             }
           })}
-          defaultValue={subscriber?.data.fields.email}
+          defaultValue={subscriber?.data?.fields.email}
         />
       </label>
       <p>{errors.email?.message}</p>
