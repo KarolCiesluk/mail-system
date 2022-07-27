@@ -1,21 +1,34 @@
 import { Subscriber, SubscriberResponse } from '../types';
 import { useForm } from 'react-hook-form';
 import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export interface SubscriberFormProps {
   title: string;
-  mutation: UseMutationResult<void, unknown, Subscriber, unknown>;
+  mutation: UseMutationResult<AxiosResponse<unknown, unknown>, unknown, Subscriber, unknown>;
   subscriber?: UseQueryResult<SubscriberResponse, unknown>;
 }
 
 export const SubscriberForm = ({ title, mutation, subscriber }: SubscriberFormProps) => {
+  const navigate = useNavigate();
+
   const {
     register,
     formState: { errors },
     handleSubmit
   } = useForm<Subscriber>();
 
-  const submit = handleSubmit(({ name, email }) => mutation.mutate({ name, email }));
+  const submit = handleSubmit(({ name, email }) =>
+    mutation.mutate(
+      { name, email },
+      {
+        onSuccess: () => {
+          navigate('/subscribers');
+        }
+      }
+    )
+  );
 
   if (subscriber?.isLoading) {
     return <div>Loading…</div>;
