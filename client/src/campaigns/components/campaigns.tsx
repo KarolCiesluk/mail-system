@@ -4,7 +4,7 @@ import { useDeleteCampaign } from '../hooks/use-delete-campaign';
 
 export const Campaigns = () => {
   const { isLoading, isError, data } = useCampaigns();
-  const { mutate } = useDeleteCampaign();
+  const { mutate: deleteCampaign } = useDeleteCampaign();
 
   if (isLoading) {
     return <div>Loading…</div>;
@@ -21,13 +21,13 @@ export const Campaigns = () => {
       <Link to="create">Create a new campaign</Link>
 
       <ul>
-        {(data?.records || []).map(({ id, fields: { subject, content, status } }) => (
+        {(data || []).map(({ id, fields: { subject, content, status } }) => (
           <li key={id}>
             subject: {subject}, content: {content}, status: {status}
             {status === 'draft' && (
               <>
                 <Link to={`${id}/update`}>Edit</Link>{' '}
-                <button onClick={() => mutate(id)}>Delete</button>
+                <button onClick={() => deleteCampaign(id)}>Delete</button>
               </>
             )}
           </li>
