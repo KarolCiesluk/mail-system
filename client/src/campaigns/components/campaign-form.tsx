@@ -2,6 +2,7 @@ import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import { Campaign, CampaignResponse } from '../types';
 import { useForm } from 'react-hook-form';
 import { useSendCampaign } from '../hooks/use-send-campaign';
+import { useNavigate } from 'react-router-dom';
 
 interface CampaignFormProps {
   title: string;
@@ -10,18 +11,27 @@ interface CampaignFormProps {
 }
 
 export const CampaignForm = ({ title, mutation, campaign }: CampaignFormProps) => {
+  const navigate = useNavigate();
+
   const {
     register,
     formState: { errors },
     handleSubmit
   } = useForm<Omit<Campaign, 'status'>>();
 
+  const saveCampaign = (campaign: Campaign) =>
+    mutation.mutate(campaign, {
+      onSuccess: () => {
+        navigate('/campaigns');
+      }
+    });
+
   const saveDraftCampaign = handleSubmit((formValues) => {
-    mutation.mutate({ ...formValues, status: 'draft' });
+    saveCampaign({ ...formValues, status: 'draft' });
   });
 
   const saveSentCampaign = handleSubmit((formValues) => {
-    mutation.mutate({ ...formValues, status: 'sent' });
+    saveCampaign({ ...formValues, status: 'sent' });
   });
 
   const sendCampaign = useSendCampaign({
