@@ -6,7 +6,7 @@ import { CampaignResponse } from '../types';
 export const useCampaign = (id: string) => {
   const queryClient = useQueryClient();
 
-  return useQuery(campaignsKeys.detail(id), () => getCampaign(id), {
+  return useQuery(campaignsKeys.detail(id), getCampaign, {
     staleTime: Infinity,
     initialData: queryClient
       .getQueryData<CampaignResponse[]>(campaignsKeys.lists())

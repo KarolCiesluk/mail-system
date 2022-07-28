@@ -6,7 +6,7 @@ import { SubscriberResponse } from '../types';
 export const useSubscriber = (id: string) => {
   const queryClient = useQueryClient();
 
-  return useQuery(subscribersKeys.detail(id), () => getSubscriber(id), {
+  return useQuery(subscribersKeys.detail(id), getSubscriber, {
     staleTime: Infinity,
     initialData: queryClient
       .getQueryData<SubscriberResponse[]>(subscribersKeys.lists())

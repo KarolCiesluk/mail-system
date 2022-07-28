@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteSubscriber } from '../api/delete-subscriber';
-
 import { subscribersKeys } from '../subscribers-keys';
 import { SubscriberResponse } from '../types';
 
