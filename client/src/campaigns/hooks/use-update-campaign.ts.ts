@@ -16,7 +16,7 @@ export const useUpdateCampaign = (id: string) => {
         )
       );
 
-      queryClient.invalidateQueries(campaignsKeys.detail(id));
+      await queryClient.invalidateQueries(campaignsKeys.detail(id));
     }
   });
 };

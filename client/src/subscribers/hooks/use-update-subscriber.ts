@@ -16,7 +16,7 @@ export const useUpdateSubscriber = (id: string) => {
         )
       );
 
-      queryClient.invalidateQueries(subscribersKeys.detail(id));
+      await queryClient.invalidateQueries(subscribersKeys.detail(id));
     }
   });
 };

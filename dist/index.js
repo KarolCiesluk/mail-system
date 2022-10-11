@@ -25,7 +25,7 @@ app.use(express.json());
 const base = new Airtable({ apiKey: (0, utils_1.getRequiredEnv)("AIRTABLE_API_KEY") }).base((0, utils_1.getRequiredEnv)("AIRTABLE_BASE_KEY"));
 SendGridMail.setApiKey((0, utils_1.getRequiredEnv)("SENDGRID_API_KEY"));
 const getSubscribers = () => __awaiter(void 0, void 0, void 0, function* () { return base("subscribers").select().all(); });
-app.post("/api/mail", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/api/mail", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const subscribersData = yield getSubscribers();
         const mailResponse = yield SendGridMail.send((0, utils_1.buildMessage)({ message: req.body, subscribersData }));
@@ -33,7 +33,7 @@ app.post("/api/mail", (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         res.status(500);
-        next(error);
+        res.end();
     }
 }));
 app.get("*", (_req, res) => {

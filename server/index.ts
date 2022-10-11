@@ -26,7 +26,7 @@ SendGridMail.setApiKey(getRequiredEnv("SENDGRID_API_KEY"));
 const getSubscribers = async (): Promise<Subscriber[]> =>
   base("subscribers").select().all();
 
-app.post("/api/mail", async (req, res, next) => {
+app.post("/api/mail", async (req, res) => {
   try {
     const subscribersData = await getSubscribers();
 
@@ -37,7 +37,7 @@ app.post("/api/mail", async (req, res, next) => {
     res.send(mailResponse);
   } catch (error) {
     res.status(500);
-    next(error);
+    res.end();
   }
 });
 

@@ -29,7 +29,7 @@ export const useDeleteSubscriber = () => {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(subscribersKeys.all);
+      void queryClient.invalidateQueries(subscribersKeys.all);
     }
   });
 };

@@ -27,7 +27,7 @@ export const useDeleteCampaign = () => {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(campaignsKeys.all);
+      void queryClient.invalidateQueries(campaignsKeys.all);
     }
   });
 };
